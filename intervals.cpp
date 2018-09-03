@@ -19,10 +19,15 @@ class Interval {
 		Interval& operator=(const Interval &interval );
 		void setLeft( const T &left );
 		void setRight( const T &right );
-		long double getLeft( void );
-		long double getRight( void );
+		T getLeft( void );
+		T getRight( void );
 		Interval concat(const Interval &interval );
 		Interval inters(const Interval &interval );
+		T Wid();
+		T Rad();
+		T Med();
+		T Abs();
+
 	private:
 		T left, right;	
 };
@@ -139,6 +144,31 @@ Interval<T> Interval<T>::inters(const Interval &interval ) {
 }
 
 template<typename T>
+T Interval<T>::Wid()
+{
+	
+	return (this->right) -( this->left);
+}
+
+template<typename T>
+T Interval<T>::Rad()
+{
+	return (this->right - this->left) / (long double)2;
+}
+
+template<typename T>
+T Interval<T>::Med()
+{
+	return (this->right + this->left) / (long double)2;
+}
+
+template<typename T>
+T Interval<T>::Abs()
+{
+	return max(abs(this->left), abs(this->right));
+}
+
+template<typename T>
 void Interval<T>::setLeft(const T &left) {
 	this->left = left;
 }
@@ -149,12 +179,12 @@ void Interval<T>::setRight(const T &right) {
 }
 
 template<typename T>
-long double Interval<T>::getLeft() {
+T Interval<T>::getLeft() {
  return left;
 }
 
 template<typename T>
-long double Interval<T>::getRight() {
+T Interval<T>::getRight() {
  return right;
 }
 
@@ -189,7 +219,13 @@ int main() {
   
   res = a.inters(b);
   cout << " a inters b:\t " << "(" << res.getLeft() << " , " << res.getRight() << ")" << endl;
+
+  cout << " wid(a):\t " << "(" << a.Wid() << ")" << endl;
+  cout << " rad(a):\t " << "(" << a.Rad() << ")" << endl;
+  cout << " med(a):\t " << "(" << a.Med() << ")" << endl;
+  cout << " abs(a):\t " << "(" << a.Abs() << ")" << endl;
 #endif
+  
   
   return 0;
 }
