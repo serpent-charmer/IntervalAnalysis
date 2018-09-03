@@ -5,26 +5,33 @@ using namespace std;
 
 class Interval {
 	public:
-	 Interval( const long double left, const long double right );
-	 Interval operator+=( Interval interval );
-	 Interval operator-=( Interval interval );
-	 Interval operator*=( Interval interval );
-	 Interval operator/=( Interval interval );
-	 Interval operator+( Interval interval );
-	 Interval operator-( Interval interval );
-	 Interval operator*( Interval interval );
-	 Interval operator/( Interval interval );
-	 Interval operator=( Interval interval );
-	 void setLeft( const long double l );
-	 void setRight( const long double r );
-	 long double getLeft( void );
-	 long double getRight( void );
-	 Interval concat( Interval interval );
-	 Interval inters( Interval interval );
+		Interval();
+		Interval( const long double left, const long double right );
+		Interval operator+=( Interval interval );
+		Interval operator-=( Interval interval );
+		Interval operator*=( Interval interval );
+		Interval operator/=( Interval interval );
+		Interval operator+( Interval interval );
+		Interval operator-( Interval interval );
+		Interval operator*( Interval interval );
+		Interval operator/( Interval interval );
+		Interval operator=( Interval interval );
+		void setLeft( const long double l );
+		void setRight( const long double r );
+		long double getLeft( void );
+		long double getRight( void );
+		Interval concat( Interval interval );
+		Interval inters( Interval interval );
 	private:
 	 long double left, right;
 	
 };
+
+Interval::Interval()
+{
+	this->left = 0;
+	this->right = 0;
+}
 
 Interval::Interval(long double l, long double r) {
  left = l;
@@ -88,7 +95,7 @@ Interval Interval::operator-(Interval interval) {
 }
 
 Interval Interval::operator*(Interval interval) {
-	register long double poss[3], tmp0, tmp1;
+	/*register long double poss[3], tmp0, tmp1;
 	poss[0]	= left * right;
 	poss[1] = left * interval.getRight();
 	poss[2] = interval.getLeft() * right;
@@ -105,14 +112,21 @@ Interval Interval::operator*(Interval interval) {
 		
 	delete(&poss);
 	delete(&i);
-	return * ( new Interval(tmp0, tmp1 ) );
+	return * ( new Interval(tmp0, tmp1 ) );*/
+
+	Interval temp;
+	long double arr[] = { this->left * interval.left, this->left * interval.right,
+						this->right * interval.left, this->right * interval.right };
+	temp.left = *min_element(begin(arr), end(arr));
+	temp.right = *max_element(begin(arr), end(arr));
+	return temp;
 }
 
 Interval Interval::operator/(Interval interval) {
 	if(right == 0 || interval.getRight() == 0) 
 		throw invalid_argument("right value can't be zero");
 	
-	register long double poss[3], tmp0, tmp1;
+	/*register long double poss[3], tmp0, tmp1;
 	poss[0]	= left / right;
 	poss[1] = left / interval.getRight();
 	poss[2] = interval.getLeft() / right;
@@ -130,12 +144,19 @@ Interval Interval::operator/(Interval interval) {
 	
 	delete(&poss);
 	delete(&i);
-	return * ( new Interval(tmp0, tmp1 ) );
+	return * ( new Interval(tmp0, tmp1 ) );*/
+	Interval temp;
+	long double arr[] = { this->left / (long double)interval.left, this->left / (long double)interval.right,
+						this->right / (long double)interval.left, this->right / (long double)interval.right };
+	temp.left = *min_element(begin(arr), end(arr));
+	temp.right = *max_element(begin(arr), end(arr));
+	return temp;
 }
 
 Interval Interval::operator=(Interval interval) {
 	left = interval.getLeft();
 	right = interval.getRight();
+	return *this;
 }
 
 
