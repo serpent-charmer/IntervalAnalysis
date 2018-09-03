@@ -1,228 +1,195 @@
-﻿#include <iostream>
+﻿
+#include <iostream>
 #include <algorithm>
+#define  DEBUG
 
-using namespace std;
-
+template<typename T>
 class Interval {
 	public:
 		Interval();
-		Interval( const long double left, const long double right );
-		Interval operator+=( Interval interval );
-		Interval operator-=( Interval interval );
-		Interval operator*=( Interval interval );
-		Interval operator/=( Interval interval );
-		Interval operator+( Interval interval );
-		Interval operator-( Interval interval );
-		Interval operator*( Interval interval );
-		Interval operator/( Interval interval );
-		Interval operator=( Interval interval );
-		void setLeft( const long double l );
-		void setRight( const long double r );
+		Interval( const T &left, const T &right );
+		Interval& operator+=(const Interval &interval );
+		Interval& operator-=(const Interval &interval );
+		Interval& operator*=(const Interval &interval );
+		Interval& operator/=(const Interval &interval );
+		Interval& operator+(const Interval &interval );
+		Interval& operator-(const Interval &interval );
+		Interval operator*(const Interval &interval );
+		Interval operator/(const Interval &interval );
+		Interval& operator=(const Interval &interval );
+		void setLeft( const T &left );
+		void setRight( const T &right );
 		long double getLeft( void );
 		long double getRight( void );
-		Interval concat( Interval interval );
-		Interval inters( Interval interval );
+		Interval concat(const Interval &interval );
+		Interval inters(const Interval &interval );
 	private:
-	 long double left, right;
-	
+		T left, right;	
 };
 
-Interval::Interval()
+template<typename T>
+Interval<T>::Interval()
 {
 	this->left = 0;
 	this->right = 0;
 }
 
-Interval::Interval(long double l, long double r) {
- left = l;
- right = r;
+template<typename T>
+Interval<T>::Interval(const T &left, const T &right) {
+	this->left = left;
+	this->right = right;
 }
 
-Interval Interval::operator+=(Interval interval) {
-	left += interval.getLeft();
-	right += interval.getRight();
+template<typename T>
+Interval<T>& Interval<T>::operator+=(const Interval &interval) {
+	this->left += interval.left;
+	this->right += interval.right;
 	return *this;
 }
 
-Interval Interval::operator-=(Interval interval) {
-	left = left - interval.getRight();
-	right = interval.getRight() - right;
+template<typename T>
+Interval<T>& Interval<T>::operator-=(const Interval &interval) {
+	this->left = this->left - interval.left;
+	this->right = interval.right - this->right;
 	return *this;
 }
 
-Interval Interval::operator*=(Interval interval) {
-	register long double poss[3];
-	poss[0]	= left * right;
-	poss[1] = left * interval.getRight();
-	poss[2] = interval.getLeft() * right;
-	poss[3] = interval.getLeft() * interval.getRight();
-	setLeft(poss[0]);
-	register int i = 0;
-	for(i = 1; i < 4; i++) 
-		if(poss[i] < left)
-			setLeft(poss[i]);
-	setRight(poss[0]);
-	for(i = 1; i < 4; i++)
-		if(poss[i] > right)
-			setRight(poss[i]);
-		
-	delete(&poss);
-	delete(&i);
+template<typename T>
+Interval<T>& Interval<T>::operator*=(const Interval &interval) {
 	
+	long double arr[] = { this->left * interval.left, this->left * interval.right,
+					this->right * interval.left, this->right * interval.right };
+	this->left = *std::min_element(std::begin(arr), std::end(arr));
+	this->right = *std::max_element(std::begin(arr), std::end(arr));
 	return *this;
 }
 
-Interval Interval::operator/=(Interval interval) {
-	if(right == 0 || interval.getRight() == 0) 
-		throw invalid_argument("right value can't be zero");
-	Interval temp = * ( new Interval(left, interval.getLeft()) );
-	Interval temp1 = * ( 
-	new Interval( 
-	1 / interval.getRight(),
-	1 / right) );
-	* (this) = temp * temp1;
-	delete(&temp);
-	delete(&temp1);
-	return * ( this );
+template<typename T>
+Interval<T>& Interval<T>::operator/=(const Interval &interval) {
+	if(this->right == 0 || interval.right == 0) 
+		throw std::invalid_argument("right value can't be zero");
+
+	long double arr[] = { this->left / (long double)interval.left, this->left / (long double)interval.right,
+		this->right / (long double)interval.left, this->right / (long double)interval.right };
+	this->left = *std::min_element(std::begin(arr), std::end(arr));
+	this->right = *std::max_element(std::begin(arr), std::end(arr));
 }
 
-Interval Interval::operator+(Interval interval) {
-	return  * ( new Interval(left + interval.getLeft(), right + interval.getRight()));
+template<typename T>
+Interval<T>& Interval<T>::operator+(const Interval &interval) {
+	return  * ( new Interval(this->left + interval.left, this->right + interval.right));
 }
 
-Interval Interval::operator-(Interval interval) {
-	return  * ( new Interval(left - interval.getRight(), interval.getRight() - right));
+template<typename T>
+Interval<T>& Interval<T>::operator-(const Interval &interval) {
+	return  * ( new Interval(this->left - interval.right, this->right - interval.left));
 }
 
-Interval Interval::operator*(Interval interval) {
-	/*register long double poss[3], tmp0, tmp1;
-	poss[0]	= left * right;
-	poss[1] = left * interval.getRight();
-	poss[2] = interval.getLeft() * right;
-	poss[3] = interval.getLeft() * interval.getRight();
-	tmp0 = poss[0];
-	register int i = 0;
-	for(i = 1; i < 4; i++) 
-		if(poss[i] < left)
-			tmp0 = poss[i];
-	tmp1 = poss[0];
-	for(i = 1; i < 4; i++)
-		if(poss[i] > right)
-			tmp1 = poss[i];
-		
-	delete(&poss);
-	delete(&i);
-	return * ( new Interval(tmp0, tmp1 ) );*/
-
+template<typename T>
+Interval<T> Interval<T>::operator*(const Interval &interval) {
 	Interval temp;
 	long double arr[] = { this->left * interval.left, this->left * interval.right,
 						this->right * interval.left, this->right * interval.right };
-	temp.left = *min_element(begin(arr), end(arr));
-	temp.right = *max_element(begin(arr), end(arr));
+	temp.left = *std::min_element(std::begin(arr), std::end(arr));
+	temp.right = *std::max_element(std::begin(arr), std::end(arr));
 	return temp;
 }
 
-Interval Interval::operator/(Interval interval) {
-	if(right == 0 || interval.getRight() == 0) 
-		throw invalid_argument("right value can't be zero");
-	
-	/*register long double poss[3], tmp0, tmp1;
-	poss[0]	= left / right;
-	poss[1] = left / interval.getRight();
-	poss[2] = interval.getLeft() / right;
-	poss[3] = interval.getLeft() / interval.getRight();
-	
-	tmp0 = poss[0];
-	register int i = 0;
-	for(i = 1; i < 4; i++) 
-		if(poss[i] < left)
-			tmp0 = poss[i];
-	tmp1 = poss[0];
-	for(i = 1; i < 4; i++)
-		if(poss[i] > right)
-			tmp1 = poss[i];
-	
-	delete(&poss);
-	delete(&i);
-	return * ( new Interval(tmp0, tmp1 ) );*/
+template<typename T>
+Interval<T> Interval<T>::operator/(const Interval &interval) {
+	if(this->right == 0 || interval.right == 0) 
+		throw std::invalid_argument("right value can't be zero");
+
 	Interval temp;
 	long double arr[] = { this->left / (long double)interval.left, this->left / (long double)interval.right,
 						this->right / (long double)interval.left, this->right / (long double)interval.right };
-	temp.left = *min_element(begin(arr), end(arr));
-	temp.right = *max_element(begin(arr), end(arr));
+	temp.left = *std::min_element(std::begin(arr), std::end(arr));
+	temp.right = *std::max_element(std::begin(arr), std::end(arr));
 	return temp;
 }
 
-Interval Interval::operator=(Interval interval) {
-	left = interval.getLeft();
-	right = interval.getRight();
+template<typename T>
+Interval<T>& Interval<T>::operator=(const Interval &var) {
+	this->left = var.left;
+	this->right = var.right;
 	return *this;
 }
 
-
-Interval Interval::concat( Interval interval ) {
-	if(interval.getLeft() < right)
+template<typename T>
+Interval<T> Interval<T>::concat(const Interval &interval ) {
+	if(interval.left < this->right)
 	{
 		return * ( new Interval( 
-		min( left, right ),
-		max( interval.getLeft(), interval.getRight() ) 
+			std::min(this->left, this->right ),
+			std::max( interval.left, interval.right )
 		) );
 	}
-	else throw logic_error("distance too big");
+	else throw std::logic_error("distance too big");
 }
 
-Interval Interval::inters( Interval interval ) {
-	if(right >= interval.getLeft()) {
+template<typename T>
+Interval<T> Interval<T>::inters(const Interval &interval ) {
+	if(this->right >= interval.left) {
 		return * ( new Interval( 
-		min( interval.getLeft(), interval.getRight() ),
-		max( left, right )
+			std::min( interval.left, interval.right ),
+			std::max(this->left, this->right )
 		) );
 	}
-	else throw logic_error("distance too big");
-	
+	else throw std::logic_error("distance too big");	
 }
 
-void Interval::setLeft(const long double l) {
- left = l;
+template<typename T>
+void Interval<T>::setLeft(const T &left) {
+	this->left = left;
 }
 
-void Interval::setRight(const long double r) {
- right = r;
+template<typename T>
+void Interval<T>::setRight(const T &right) {
+	this->right = right;
 }
 
-long double Interval::getLeft() {
+template<typename T>
+long double Interval<T>::getLeft() {
  return left;
 }
 
-long double Interval::getRight() { 
+template<typename T>
+long double Interval<T>::getRight() {
  return right;
 }
 
+using namespace std;
 int main() {
-	
-  Interval inter = *( new Interval(1, 3) );
-  Interval inter1 = *( new Interval(-1, 5) );
+
+#ifdef DEBUG
+  Interval<double> a(1, 3);
+  Interval<double> b(-1, 5);
   
-  Interval res = inter;
-  cout << "=" << res.getLeft() << " " << res.getRight() << endl;
+  Interval<double> res;
+
+  cout << "a(" << a.getLeft() << " , " << a.getRight() << ")"  ;
+  cout << "\tb(" << b.getLeft() << " , " << b.getRight() << ")" << endl<<endl;
+  res = b;
+  cout << " = b:\t\t " << "(" << res.getLeft() << " , " << res.getRight() << ")" << endl;
+
+  res = a + b;
+  cout << " a + b:\t\t " << "(" << res.getLeft() << " , " << res.getRight() << ")" << endl;
+
+  res = a - b;
+  cout << " a-b:\t\t " << "(" << res.getLeft() << " , " << res.getRight() << ")" << endl;
   
-  res = inter + inter1;
-  cout << "+" << res.getLeft() << " " << res.getRight() << endl;
+  res = a * b;
+  cout << " a*b:\t\t " << "(" << res.getLeft() << " , " << res.getRight() << ")" << endl;
   
-  res = inter - inter1;
-  cout << "-" << res.getLeft() << " " << res.getRight() << endl;
+  res = a / b;
+  cout << " a/b:\t\t " << "(" << res.getLeft() << " , " << res.getRight() << ")" << endl;
   
-  res = inter * inter1;
-  cout << "*" << res.getLeft() << " " << res.getRight() << endl;
+  res = a.concat(b);
+  cout << " a concat b:\t " << "(" << res.getLeft() << " , " << res.getRight() << ")" << endl;
   
-  res = inter / inter1;
-  cout << "/" << res.getLeft() << " " << res.getRight() << endl;
-  
-  res = inter.concat(inter1);
-  cout << "concat" << res.getLeft() << " " << res.getRight() << endl;
-  
-  res = inter.inters(inter1);
-  cout << "inters" << res.getLeft() << " " << res.getRight() << endl;
+  res = a.inters(b);
+  cout << " a inters b:\t " << "(" << res.getLeft() << " , " << res.getRight() << ")" << endl;
+#endif
   
   return 0;
 }
