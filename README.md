@@ -1,2 +1,2 @@
 # IntervalAnalysis
-interval analysis cpp utilities
+interval analysis c++ utilities
