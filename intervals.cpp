@@ -3,6 +3,8 @@
 #include <algorithm>
 #define  DEBUG
 
+using namespace std;
+
 template<typename T>
 class Interval {
 	public:
@@ -23,10 +25,10 @@ class Interval {
 		T getRight( void );
 		Interval concat(const Interval &interval );
 		Interval inters(const Interval &interval );
-		T Wid();
-		T Rad();
-		T Med();
-		T Abs();
+		T width();
+		T radius();
+		T middle();
+		T iabs();
 
 	private:
 		T left, right;	
@@ -35,8 +37,8 @@ class Interval {
 template<typename T>
 Interval<T>::Interval()
 {
-	this->left = 0;
-	this->right = 0;
+	left = 0;
+	right = 0;
 }
 
 template<typename T>
@@ -47,86 +49,101 @@ Interval<T>::Interval(const T &left, const T &right) {
 
 template<typename T>
 Interval<T>& Interval<T>::operator+=(const Interval &interval) {
-	this->left += interval.left;
-	this->right += interval.right;
+	left += interval.left;
+	right += interval.right;
 	return *this;
 }
 
 template<typename T>
 Interval<T>& Interval<T>::operator-=(const Interval &interval) {
-	this->left = this->left - interval.left;
-	this->right = interval.right - this->right;
+	left -= interval.left;
+	right = interval.right - right;
 	return *this;
 }
 
 template<typename T>
 Interval<T>& Interval<T>::operator*=(const Interval &interval) {
 	
-	long double arr[] = { this->left * interval.left, this->left * interval.right,
-					this->right * interval.left, this->right * interval.right };
-	this->left = *std::min_element(std::begin(arr), std::end(arr));
-	this->right = *std::max_element(std::begin(arr), std::end(arr));
+	T arr[] = { 
+	left * interval.left, 
+	left * interval.right,
+	right * interval.left,
+	right * interval.right };
+	left = * min_element(begin(arr), end(arr));
+	right = * max_element(begin(arr), end(arr));
 	return *this;
 }
 
 template<typename T>
 Interval<T>& Interval<T>::operator/=(const Interval &interval) {
-	if(this->right == 0 || interval.right == 0) 
+	if(right == 0 || interval.right == 0) 
 		throw std::invalid_argument("right value can't be zero");
 
-	long double arr[] = { this->left / (long double)interval.left, this->left / (long double)interval.right,
-		this->right / (long double)interval.left, this->right / (long double)interval.right };
-	this->left = *std::min_element(std::begin(arr), std::end(arr));
-	this->right = *std::max_element(std::begin(arr), std::end(arr));
+	T arr[] = { 
+	left / (T)interval.left, 
+	left / (T)interval.right,
+	right / (T)interval.left, 
+	right / (T)interval.right 
+	};
+	left = * min_element(begin(arr), end(arr));
+	right = * max_element(begin(arr), end(arr));
 }
 
 template<typename T>
 Interval<T>& Interval<T>::operator+(const Interval &interval) {
-	return  * ( new Interval(this->left + interval.left, this->right + interval.right));
+	return  * ( new Interval(left + interval.left, right + interval.right));
 }
 
 template<typename T>
 Interval<T>& Interval<T>::operator-(const Interval &interval) {
-	return  * ( new Interval(this->left - interval.right, this->right - interval.left));
+	return  * ( new Interval(left - interval.right, right - interval.left));
 }
 
 template<typename T>
 Interval<T> Interval<T>::operator*(const Interval &interval) {
 	Interval temp;
-	long double arr[] = { this->left * interval.left, this->left * interval.right,
-						this->right * interval.left, this->right * interval.right };
-	temp.left = *std::min_element(std::begin(arr), std::end(arr));
-	temp.right = *std::max_element(std::begin(arr), std::end(arr));
+	T arr[] = { 
+	left * interval.left, 
+	left * interval.right,
+	right * interval.left, 
+	right * interval.right 
+	};
+	temp.left = * min_element(begin(arr), end(arr));
+	temp.right = * max_element(begin(arr), end(arr));
 	return temp;
 }
 
 template<typename T>
 Interval<T> Interval<T>::operator/(const Interval &interval) {
-	if(this->right == 0 || interval.right == 0) 
-		throw std::invalid_argument("right value can't be zero");
+	if(right == 0 || interval.right == 0) 
+		throw invalid_argument("right value can't be zero");
 
 	Interval temp;
-	long double arr[] = { this->left / (long double)interval.left, this->left / (long double)interval.right,
-						this->right / (long double)interval.left, this->right / (long double)interval.right };
-	temp.left = *std::min_element(std::begin(arr), std::end(arr));
-	temp.right = *std::max_element(std::begin(arr), std::end(arr));
+	T arr[] = { 
+	left / (T) interval.left,
+	left / (T) interval.right,
+	right / (T) interval.left, 
+	right / (T) interval.right 
+	};
+	temp.left = * min_element(begin(arr), end(arr));
+	temp.right = * max_element(begin(arr), end(arr));
 	return temp;
 }
 
 template<typename T>
-Interval<T>& Interval<T>::operator=(const Interval &var) {
-	this->left = var.left;
-	this->right = var.right;
+Interval<T>& Interval<T>::operator=(const Interval &interval) {
+	left = interval.left;
+	right = interval.right;
 	return *this;
 }
 
 template<typename T>
 Interval<T> Interval<T>::concat(const Interval &interval ) {
-	if(interval.left < this->right)
+	if(interval.left < right)
 	{
 		return * ( new Interval( 
-			std::min(this->left, this->right ),
-			std::max( interval.left, interval.right )
+			min( left, right ),
+			max( interval.left, interval.right )
 		) );
 	}
 	else throw std::logic_error("distance too big");
@@ -136,36 +153,35 @@ template<typename T>
 Interval<T> Interval<T>::inters(const Interval &interval ) {
 	if(this->right >= interval.left) {
 		return * ( new Interval( 
-			std::min( interval.left, interval.right ),
-			std::max(this->left, this->right )
+			min( interval.left, interval.right ),
+			max( left, right )
 		) );
 	}
-	else throw std::logic_error("distance too big");	
+	else throw logic_error("distance too big");	
 }
 
 template<typename T>
-T Interval<T>::Wid()
+T Interval<T>::width()
 {
-	
-	return (this->right) -( this->left);
+	return right - left;
 }
 
 template<typename T>
-T Interval<T>::Rad()
+T Interval<T>::radius()
 {
-	return (this->right - this->left) / (long double)2;
+	return ( right - left ) / (long double) 2;
 }
 
 template<typename T>
-T Interval<T>::Med()
+T Interval<T>::middle()
 {
-	return (this->right + this->left) / (long double)2;
+	return ( right + left ) / (long double) 2;
 }
 
 template<typename T>
-T Interval<T>::Abs()
+T Interval<T>::iabs()
 {
-	return max(abs(this->left), abs(this->right));
+	return max( abs(left), abs(right));
 }
 
 template<typename T>
@@ -188,7 +204,6 @@ T Interval<T>::getRight() {
  return right;
 }
 
-using namespace std;
 int main() {
 
 #ifdef DEBUG
@@ -220,10 +235,10 @@ int main() {
   res = a.inters(b);
   cout << " a inters b:\t " << "(" << res.getLeft() << " , " << res.getRight() << ")" << endl;
 
-  cout << " wid(a):\t " << "(" << a.Wid() << ")" << endl;
-  cout << " rad(a):\t " << "(" << a.Rad() << ")" << endl;
-  cout << " med(a):\t " << "(" << a.Med() << ")" << endl;
-  cout << " abs(a):\t " << "(" << a.Abs() << ")" << endl;
+  cout << " wid(a):\t " << "(" << a.width() << ")" << endl;
+  cout << " rad(a):\t " << "(" << a.radius() << ")" << endl;
+  cout << " med(a):\t " << "(" << a.middle() << ")" << endl;
+   //cout << " abs(a):\t " << "(" << a.Abs() << ")" << endl;
 #endif
   
   
