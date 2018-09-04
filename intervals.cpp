@@ -26,7 +26,7 @@ public:
 	T getRight(void);
 	Interval concat(const Interval &interval);
 	Interval inters(const Interval &interval);
-	void VariableIsReal(); //throws an exception
+	void isGenericTypeReal(); //throws an exception
 	T width();
 	T radius();
 	T middle();
@@ -39,14 +39,14 @@ private:
 template<typename T>
 Interval<T>::Interval()
 {
-	VariableIsReal();
+	isGenericTypeReal();
 	left = 0;
 	right = 0;
 }
 
 template<typename T>
 Interval<T>::Interval(const T &left, const T &right) {
-	VariableIsReal();
+	isGenericTypeReal();
 	this->left = left;
 	this->right = right;
 }
@@ -165,13 +165,16 @@ Interval<T> Interval<T>::inters(const Interval &interval) {
 }
 
 template<typename T>
-void Interval<T>::VariableIsReal()
-{
-	if (!(typeid(T).name() == typeid(float).name() ||
-		 typeid(T).name() == typeid(double).name() ||
-		 typeid(T).name() == typeid(long double).name()
-		))
-		throw std::logic_error("type is not real");
+void Interval<T>::isGenericTypeReal() {
+	string type_name = typeid(T).name();
+	if (
+	!(
+	type_name == typeid(float).name() ||
+    type_name == typeid(double).name() ||
+    type_name == typeid(long double).name()
+		)
+		)
+		throw logic_error("type is not real");
 }
 
 template<typename T>
@@ -183,13 +186,13 @@ T Interval<T>::width()
 template<typename T>
 T Interval<T>::radius()
 {
-	return (right - left) / (T)2;
+	return (right - left) / 2.0;
 }
 
 template<typename T>
 T Interval<T>::middle()
 {
-	return (right + left) / (T)2;
+	return (right + left) / 2.0;
 }
 
 template<typename T>
