@@ -2,7 +2,7 @@
 
 #ifndef INTERVALS_H
 #define INTERVALS_H
-#endif
+
 
 #include <iostream>
 #include <algorithm>
@@ -223,4 +223,5 @@ T Interval<T>::getRight() {
 	return right;
 }
 
+#endif
 
