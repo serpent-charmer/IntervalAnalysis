@@ -159,7 +159,7 @@ Interval<T> Interval<T>::concat(const Interval &interval) {
 
 template<typename T>
 Interval<T> Interval<T>::inters(const Interval &interval) {
-	if (this->right >= interval.left) {
+	if (right >= interval.left) {
 		return *(new Interval(
 			std::min(interval.left, interval.right),
 			std::max(left, right)
