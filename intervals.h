@@ -8,6 +8,8 @@
 #include <algorithm>
 #include <typeinfo>
 
+namespace ian { //IntervalANalysis
+
 template<typename T>
 class Interval {
 public:
@@ -221,6 +223,13 @@ T Interval<T>::getLeft() {
 template<typename T>
 T Interval<T>::getRight() {
 	return right;
+}
+
+template<typename T>
+std::ostream& operator<<(std::ostream &strm, Interval<T> &interval) {
+  return strm << "Interval(" << interval.getLeft() << " " << interval.getRight() << ")" << std::endl;
+}
+
 }
 
 #endif

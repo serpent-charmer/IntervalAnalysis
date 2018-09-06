@@ -7,33 +7,33 @@ int main() {
 
 #ifdef DEBUG
 
-	Interval<double> a(1, 3);
-	Interval<double> b(-1, 5);
+	ian::Interval<double> a(1, 3);
+	ian::Interval<double> b(-1, 5);
 
-	Interval<double> res;
+	ian::Interval<double> res;
 
-	std::cout << "a(" << a.getLeft() << " , " << a.getRight() << ")" << std::endl;
-	std::cout << "b(" << b.getLeft() << " , " << b.getRight() << ")" << std::endl;
+	std::cout << "a = " << a << std::endl;
+	std::cout << "b = " << b << std::endl;
 	res = b;
-	std::cout << " = b:\t\t " << "(" << res.getLeft() << " , " << res.getRight() << ")" << std::endl;
+	std::cout << " = b:\t\t " << res << std::endl;
 
 	res = a + b;
-	std::cout << " a + b:\t\t " << "(" << res.getLeft() << " , " << res.getRight() << ")" << std::endl;
+	std::cout << " a + b:\t\t " << res << std::endl;
 
 	res = a - b;
-	std::cout << " a-b:\t\t " << "(" << res.getLeft() << " , " << res.getRight() << ")" << std::endl;
+	std::cout << " a-b:\t\t " << res << std::endl;
 
 	res = a * b;
-	std::cout << " a*b:\t\t " << "(" << res.getLeft() << " , " << res.getRight() << ")" << std::endl;
+	std::cout << " a*b:\t\t " << res << std::endl;
 
 	res = a / b;
-	std::cout << " a/b:\t\t " << "(" << res.getLeft() << " , " << res.getRight() << ")" << std::endl;
+	std::cout << " a/b:\t\t " << res << std::endl;
 
 	res = a.concat(b);
-	std::cout << " a concat b:\t " << "(" << res.getLeft() << " , " << res.getRight() << ")" << std::endl;
+	std::cout << " a concat b:\t " << res << std::endl;
 
 	res = a.inters(b);
-	std::cout << " a inters b:\t " << "(" << res.getLeft() << " , " << res.getRight() << ")" << std::endl;
+	std::cout << " a inters b:\t " << res << std::endl;
 
 	std::cout << " wid(a):\t " << "(" << a.width() << ")" << std::endl;
 	std::cout << " rad(a):\t " << "(" << a.radius() << ")" << std::endl;
