@@ -3,11 +3,12 @@
 #ifndef INTERVALS_H
 #define INTERVALS_H
 
+
 #include <iostream>
 #include <algorithm>
 #include <typeinfo>
 
-using namespace std;
+namespace ian { //IntervalANalysis
 
 template<typename T>
 class Interval {
@@ -76,8 +77,8 @@ Interval<T>& Interval<T>::operator*=(const Interval &interval) {
 		left * interval.right,
 		right * interval.left,
 		right * interval.right };
-	left = *min_element(begin(arr), end(arr));
-	right = *max_element(begin(arr), end(arr));
+	left = * std::min_element( std::begin(arr), std::end(arr) );
+	right = * std::max_element( std::begin(arr), std::end(arr) );
 	return *this;
 }
 
@@ -92,8 +93,8 @@ Interval<T>& Interval<T>::operator/=(const Interval &interval) {
 		right / (T) interval.left,
 		right / (T) interval.right
 	};
-	left = *min_element(begin(arr), end(arr));
-	right = *max_element(begin(arr), end(arr));
+	left = * std::min_element( std::begin(arr), std::end(arr) );
+	right = * std::max_element( std::begin(arr), std::end(arr) );
 }
 
 template<typename T>
@@ -115,15 +116,15 @@ Interval<T> Interval<T>::operator*(const Interval &interval) {
 		right * interval.left,
 		right * interval.right
 	};
-	temp.left = *min_element(begin(arr), end(arr));
-	temp.right = *max_element(begin(arr), end(arr));
+	temp.left = * std::min_element( std::begin(arr), std::end(arr) );
+	temp.right = * std::max_element( std::begin(arr), std::end(arr));
 	return temp;
 }
 
 template<typename T>
 Interval<T> Interval<T>::operator/(const Interval &interval) {
 	if (right == 0 || interval.right == 0)
-		throw invalid_argument("right value can't be zero");
+		throw std::invalid_argument("right value can't be zero");
 
 	Interval temp;
 	T arr[] = {
@@ -132,8 +133,8 @@ Interval<T> Interval<T>::operator/(const Interval &interval) {
 		right / (T)interval.left,
 		right / (T)interval.right
 	};
-	temp.left = *min_element(begin(arr), end(arr));
-	temp.right = *max_element(begin(arr), end(arr));
+	temp.left = * std::min_element( std::begin(arr), std::end(arr) );
+	temp.right = * std::max_element( std::begin(arr), std::end(arr) );
 	return temp;
 }
 
@@ -149,8 +150,8 @@ Interval<T> Interval<T>::concat(const Interval &interval) {
 	if (interval.left < right)
 	{
 		return *(new Interval(
-			min(left, right),
-			max(interval.left, interval.right)
+			std::min(left, right),
+			std::max(interval.left, interval.right)
 		));
 	}
 	else throw std::logic_error("distance too big");
@@ -158,18 +159,18 @@ Interval<T> Interval<T>::concat(const Interval &interval) {
 
 template<typename T>
 Interval<T> Interval<T>::inters(const Interval &interval) {
-	if (this->right >= interval.left) {
+	if (right >= interval.left) {
 		return *(new Interval(
-			min(interval.left, interval.right),
-			max(left, right)
+			std::min(interval.left, interval.right),
+			std::max(left, right)
 		));
 	}
-	else throw logic_error("distance too big");
+	else throw std::logic_error("distance too big");
 }
 
 template<typename T>
 void Interval<T>::isGenericTypeReal() {
-	string type_name = typeid(T).name();
+	std::string type_name = typeid(T).name();
 	if (
 		!(
 			type_name == typeid(float).name() ||
@@ -177,7 +178,7 @@ void Interval<T>::isGenericTypeReal() {
 			type_name == typeid(long double).name()
 			)
 		) 
-		throw logic_error("type is not real");
+		throw std::logic_error("type is not real");
 }
 
 template<typename T>
@@ -201,7 +202,7 @@ T Interval<T>::middle()
 template<typename T>
 T Interval<T>::iabs()
 {
-	return max(abs(left), abs(right));
+	return std::max( std::abs(left), std::abs(right));
 }
 
 template<typename T>
@@ -224,6 +225,12 @@ T Interval<T>::getRight() {
 	return right;
 }
 
+template<typename T>
+std::ostream& operator<<(std::ostream &strm, Interval<T> &interval) {
+  return strm << "Interval(" << interval.getLeft() << " " << interval.getRight() << ")" << std::endl;
+}
+
+}
 
 #endif
 

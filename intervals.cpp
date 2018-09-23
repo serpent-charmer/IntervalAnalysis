@@ -7,38 +7,38 @@ int main() {
 
 #ifdef DEBUG
 
-	Interval<double> a(1, 3);
-	Interval<double> b(-1, 5);
+	ian::Interval<double> a(1, 3);
+	ian::Interval<double> b(-1, 5);
 
-	Interval<double> res;
+	ian::Interval<double> res;
 
-	cout << "a(" << a.getLeft() << " , " << a.getRight() << ")";
-	cout << "\tb(" << b.getLeft() << " , " << b.getRight() << ")" << endl << endl;
+	std::cout << "a = " << a << std::endl;
+	std::cout << "b = " << b << std::endl;
 	res = b;
-	cout << " = b:\t\t " << "(" << res.getLeft() << " , " << res.getRight() << ")" << endl;
+	std::cout << " = b:\t\t " << res << std::endl;
 
 	res = a + b;
-	cout << " a + b:\t\t " << "(" << res.getLeft() << " , " << res.getRight() << ")" << endl;
+	std::cout << " a + b:\t\t " << res << std::endl;
 
 	res = a - b;
-	cout << " a-b:\t\t " << "(" << res.getLeft() << " , " << res.getRight() << ")" << endl;
+	std::cout << " a-b:\t\t " << res << std::endl;
 
 	res = a * b;
-	cout << " a*b:\t\t " << "(" << res.getLeft() << " , " << res.getRight() << ")" << endl;
+	std::cout << " a*b:\t\t " << res << std::endl;
 
 	res = a / b;
-	cout << " a/b:\t\t " << "(" << res.getLeft() << " , " << res.getRight() << ")" << endl;
+	std::cout << " a/b:\t\t " << res << std::endl;
 
 	res = a.concat(b);
-	cout << " a concat b:\t " << "(" << res.getLeft() << " , " << res.getRight() << ")" << endl;
+	std::cout << " a concat b:\t " << res << std::endl;
 
 	res = a.inters(b);
-	cout << " a inters b:\t " << "(" << res.getLeft() << " , " << res.getRight() << ")" << endl;
+	std::cout << " a inters b:\t " << res << std::endl;
 
-	cout << " wid(a):\t " << "(" << a.width() << ")" << endl;
-	cout << " rad(a):\t " << "(" << a.radius() << ")" << endl;
-	cout << " med(a):\t " << "(" << a.middle() << ")" << endl;
-	cout << " abs(a):\t " << "(" << a.iabs() << ")" << endl;
+	std::cout << " wid(a):\t " << "(" << a.width() << ")" << std::endl;
+	std::cout << " rad(a):\t " << "(" << a.radius() << ")" << std::endl;
+	std::cout << " med(a):\t " << "(" << a.middle() << ")" << std::endl;
+	std::cout << " abs(a):\t " << "(" << a.iabs() << ")" << std::endl;
 
 
 	system("pause");
