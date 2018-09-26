@@ -227,56 +227,32 @@ namespace ian { //IntervalANalysis
 
 	template<typename T>
 	std::ostream& operator<<(std::ostream &strm, Interval<T> &interval) {
-		return strm << "Interval(" << interval.getLeft() << " " << interval.getRight() << ")" << std::endl;
+		return strm <<"Interval"<< "[" << interval.getLeft() << "," << interval.getRight() << "]" ;
 	}
 
 	//template operator *
-	template<typename T>
-	inline Interval<T> operator*(const T &value,const Interval<T> & interval)
+	template<typename T1, typename T>
+	inline Interval<T> operator*(const T1 &value,const Interval<T> & interval)
 	{
 		return Interval<T>(interval.left*value, interval.right*value);
 	}
 
-	template<typename T>
-	inline Interval<T> operator*(const Interval<T> & interval, const T &value)
+	template<typename T, typename T1>
+	inline Interval<T> operator*(const Interval<T> & interval, const T1 &value)
 	{
 		return Interval<T>(interval.left*value, interval.right*value);
-	}
-
-	template<typename T>
-	inline Interval<T> operator*(const int &value,const Interval<T> & interval)
-	{
-		return Interval<T>(interval.left*value, interval.right*value);
-	}
-
-	template<typename T>
-	inline Interval<T> operator*(const Interval<T> & interval, const int &value)
-	{
-		return Interval<T>(interval.left*value, interval.right*value);
-	}
+	}	
 	//template operator *   
 
 	//template operator +
-	template<typename T>
-	inline Interval<T> operator+(const T &value, const Interval<T> & interval)
+	template<typename T1,typename T>
+	inline Interval<T> operator+(const T1 &value, const Interval<T> & interval)
 	{
 		return Interval<T>(interval.left+value, -(-interval.right-value));
 	}
 
-	template<typename T>
-	inline Interval<T> operator+(const Interval<T> & interval,const T &value )
-	{
-		return Interval<T>(interval.left + value, -(-interval.right - value));
-	}
-	
-	template<typename T>
-	inline Interval<T> operator+(const int &value, const Interval<T> & interval)
-	{
-		return Interval<T>(interval.left+value, -(-interval.right - value));
-	}
-
-	template<typename T>
-	inline Interval<T> operator+(const Interval<T> & interval,const int &value)
+	template<typename T,typename T1>
+	inline Interval<T> operator+(const Interval<T> & interval,const T1 &value)
 	{
 		return Interval<T>(interval.left + value, -(-interval.right - value));
 	}
