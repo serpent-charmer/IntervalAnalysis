@@ -215,7 +215,7 @@ namespace ian { //IntervalANalysis
 
 	template<typename T>
 	std::ostream& operator<<(std::ostream &strm, Interval<T> &interval) {
-		return strm <<"IVL"<< "(" << interval.left << "," << interval.right << ")" ;
+		return strm << "[" << interval.left << " " << interval.right << "]" ;
 	}
 
 	template<typename T1, typename T>
