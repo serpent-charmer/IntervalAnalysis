@@ -23,6 +23,10 @@ namespace ian { //IntervalANalysis
 		Interval operator*(const Interval &interval);		
 		Interval operator/(const Interval &interval);
 		Interval& operator=(const Interval &interval);
+		bool operator>(const Interval &interval);
+		bool operator<(const Interval &interval);
+		bool operator>=(const Interval &interval);
+		bool operator<=(const Interval &interval);
 		Interval concat(const Interval &interval);
 		Interval inters(const Interval &interval);
 		void isGenericTypeReal(); //throws an exception
@@ -240,6 +244,32 @@ namespace ian { //IntervalANalysis
 	inline Interval<T> operator+(const Interval<T> & interval,const T1 &value)
 	{
 		return Interval<T>(interval.left + value, -(-interval.right - value));
+	}
+	
+	template<typename T>
+	inline bool Interval<T>::operator>(const Interval<T> & interval)
+	{
+		return (right + left) / 2.0 > (interval.right + interval.left) / 2.0;
+	}
+	
+	template<typename T>
+	inline bool Interval<T>::operator<(const Interval<T> & interval)
+	{
+		return (right + left) / 2.0 < (interval.right + interval.left) / 2.0;
+	}
+	
+	
+	template<typename T>
+	inline bool Interval<T>::operator>=(const Interval<T> & interval)
+	{
+		return (right + left) / 2.0 >= (interval.right + interval.left) / 2.0;
+	}
+	
+	
+	template<typename T>
+	inline bool Interval<T>::operator<=(const Interval<T> & interval)
+	{
+		return (right + left) / 2.0 <= (interval.right + interval.left) / 2.0;
 	}
 	
 	template<typename T>
