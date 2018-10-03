@@ -29,7 +29,6 @@ namespace ian { //IntervalANalysis
 		bool operator<=(const Interval &interval);
 		Interval concat(const Interval &interval);
 		Interval inters(const Interval &interval);
-		void isGenericTypeReal(); //throws an exception
 		T width();
 		T radius();
 		T middle();
@@ -42,29 +41,14 @@ namespace ian { //IntervalANalysis
 	template<typename T>
 	Interval<T>::Interval()
 	{
-		isGenericTypeReal();
 		left = 0;
 		right = 0;
 	}
 
 	template<typename T>
 	Interval<T>::Interval(const T &left, const T &right) {
-		isGenericTypeReal();
-		if(right < left)
-			if(left > 0) {
-			this->left = left - right;
-		    this->right = left + right;
-		    }
-		    else        {
-			this->left = left + right;
-		    this->right = left - right;
-		    }
-		else {
 		this->left = left;
-		this->right = right;
-		}
-		
-			
+		this->right = right;	
 	}
 
 	template<typename T>
@@ -178,19 +162,6 @@ namespace ian { //IntervalANalysis
 			));
 		}
 		else throw std::logic_error("distance too big");
-	}
-
-	template<typename T>
-	void Interval<T>::isGenericTypeReal() {
-		std::string type_name = typeid(T).name();
-		if (
-			!(
-				type_name == typeid(float).name() ||
-				type_name == typeid(double).name() ||
-				type_name == typeid(long double).name()
-				)
-			)
-			throw std::logic_error("type is not real");
 	}
 
 	template<typename T>
