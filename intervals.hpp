@@ -1,5 +1,3 @@
-#pragma once
-
 #ifndef INTERVALS_H
 #define INTERVALS_H
 
@@ -25,13 +23,12 @@ namespace ian { //IntervalANalysis
 		Interval operator*(const Interval &interval);		
 		Interval operator/(const Interval &interval);
 		Interval& operator=(const Interval &interval);
-		void setLeft(const T &left);
-		void setRight(const T &right);
-		T getLeft(void);
-		T getRight(void);
+		bool operator>(const Interval &interval);
+		bool operator<(const Interval &interval);
+		bool operator>=(const Interval &interval);
+		bool operator<=(const Interval &interval);
 		Interval concat(const Interval &interval);
 		Interval inters(const Interval &interval);
-		void isGenericTypeReal(); //throws an exception
 		T width();
 		T radius();
 		T middle();
@@ -44,16 +41,14 @@ namespace ian { //IntervalANalysis
 	template<typename T>
 	Interval<T>::Interval()
 	{
-		isGenericTypeReal();
 		left = 0;
 		right = 0;
 	}
 
 	template<typename T>
 	Interval<T>::Interval(const T &left, const T &right) {
-		isGenericTypeReal();
 		this->left = left;
-		this->right = right;
+		this->right = right;	
 	}
 
 	template<typename T>
@@ -170,19 +165,6 @@ namespace ian { //IntervalANalysis
 	}
 
 	template<typename T>
-	void Interval<T>::isGenericTypeReal() {
-		std::string type_name = typeid(T).name();
-		if (
-			!(
-				type_name == typeid(float).name() ||
-				type_name == typeid(double).name() ||
-				type_name == typeid(long double).name()
-				)
-			)
-			throw std::logic_error("type is not real");
-	}
-
-	template<typename T>
 	T Interval<T>::width()
 	{
 		return right - left;
@@ -207,31 +189,10 @@ namespace ian { //IntervalANalysis
 	}
 
 	template<typename T>
-	void Interval<T>::setLeft(const T &left) {
-		this->left = left;
-	}
-
-	template<typename T>
-	void Interval<T>::setRight(const T &right) {
-		this->right = right;
-	}
-
-	template<typename T>
-	T Interval<T>::getLeft() {
-		return left;
-	}
-
-	template<typename T>
-	T Interval<T>::getRight() {
-		return right;
-	}
-
-	template<typename T>
 	std::ostream& operator<<(std::ostream &strm, Interval<T> &interval) {
-		return strm <<"Interval"<< "[" << interval.getLeft() << "," << interval.getRight() << "]" ;
+		return strm << "[" << interval.left << " " << interval.right << "]" ;
 	}
 
-	//template operator *
 	template<typename T1, typename T>
 	inline Interval<T> operator*(const T1 &value,const Interval<T> & interval)
 	{
@@ -243,9 +204,7 @@ namespace ian { //IntervalANalysis
 	{
 		return Interval<T>(interval.left*value, interval.right*value);
 	}	
-	//template operator *   
-
-	//template operator +
+	
 	template<typename T1,typename T>
 	inline Interval<T> operator+(const T1 &value, const Interval<T> & interval)
 	{
@@ -257,24 +216,39 @@ namespace ian { //IntervalANalysis
 	{
 		return Interval<T>(interval.left + value, -(-interval.right - value));
 	}
-	//template operator +
-
-	template<typename T, typename T1>
-	Interval<T> pow(const Interval<T> &interval, const T1 &value)
+	
+	template<typename T>
+	inline bool Interval<T>::operator>(const Interval<T> & interval)
 	{
-		return Interval<T>(pow(interval.left), pow(interval.right));
+		return (right + left) / 2.0 > (interval.right + interval.left) / 2.0;
 	}
-
-	template<typename T, typename T1>
-	Interval<T> exp(const Interval<T> &interval, const T1 &value)
+	
+	template<typename T>
+	inline bool Interval<T>::operator<(const Interval<T> & interval)
 	{
-		return Interval<T>(exp(interval.left), exp(interval.right));
+		return (right + left) / 2.0 < (interval.right + interval.left) / 2.0;
 	}
-
-	template<typename T, typename T1>
-	Interval<T> log(const Interval<T> &interval, const T1 &value)
+	
+	
+	template<typename T>
+	inline bool Interval<T>::operator>=(const Interval<T> & interval)
 	{
-		return Interval<T>(log(interval.left), log(interval.right));
+		return (right + left) / 2.0 >= (interval.right + interval.left) / 2.0;
+	}
+	
+	
+	template<typename T>
+	inline bool Interval<T>::operator<=(const Interval<T> & interval)
+	{
+		return (right + left) / 2.0 <= (interval.right + interval.left) / 2.0;
+	}
+	
+	template<typename T>
+	Interval<T> map(Interval<T> &interval, T (*f)(T))
+	{
+		interval.left = (*f)(interval.left);
+		interval.right = (*f)(interval.right);
+		return interval;
 	}
 	
 }
